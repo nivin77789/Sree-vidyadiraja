@@ -74,15 +74,16 @@
     from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
   // Replace with your Firebase project config
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCxzn7eUe9QRa0sjLp4v6rS2RJU_cRCtkg",
+  authDomain: "vidyadhiraja-b6ec5.firebaseapp.com",
+  projectId: "vidyadhiraja-b6ec5",
+  storageBucket: "vidyadhiraja-b6ec5.firebasestorage.app",
+  messagingSenderId: "1018541742665",
+  appId: "1:1018541742665:web:4ded9d4c51d33edd203d98"
+};
 
+//vidyadhiraja-b6ec5.firebasestorage.app
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
@@ -137,6 +138,7 @@
       const storageRef = ref(storage, "blogImages/" + Date.now() + "_" + file.name);
       await uploadBytes(storageRef, file);
       imageUrl = await getDownloadURL(storageRef);
+    
     }
 
     if (editId) {

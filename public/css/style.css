@@ -205,7 +205,8 @@ h4, h5, h6, .h4, .h5, .h6 {
 
 .hero-header .hero-header-inner {
     padding: 3rem;
-    background: rgba(255, 255, 255, .5);
+    border-radius: 30px;
+    background: rgba(226, 226, 226, 0.21);
 }
 
 @media (max-width: 992px) {
