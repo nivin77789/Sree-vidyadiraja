@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login | Sree Vidyadhiraja Foundation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: var(--bs-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-card {
+      background: #fff;
+      box-shadow: 0 0 45px rgba(0, 0, 0, .08);
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-card h2 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--bs-dark);
+    }
+    .btn-primary { width: 100%; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h2>Admin Login</h2>
+    <form id="loginForm">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+      <p id="errorMsg" class="text-danger mt-3"></p>
+    </form>
+  </div>
+
+  <!-- Firebase (Modular v9+) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCxzn7eUe9QRa0sjLp4v6rS2RJU_cRCtkg",
+      authDomain: "vidyadhiraja-b6ec5.firebaseapp.com",
+      projectId: "vidyadhiraja-b6ec5",
+      storageBucket: "vidyadhiraja-b6ec5.firebasestorage.app",
+      messagingSenderId: "1018541742665",
+      appId: "1:1018541742665:web:4ded9d4c51d33edd203d98"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Handle Login
+    const loginForm = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // ✅ Login success → go to dashboard
+          window.location.href = "admin-dashboard.html";
+        })
+        .catch((error) => {
+          errorMsg.textContent = error.message;
+        });
+    });
+  </script>
+
+</body>
+</html>

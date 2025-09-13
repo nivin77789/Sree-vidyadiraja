@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Panel - Blog Management</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    img.preview { max-height: 100px; margin-top: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2 class="mb-4">Blog Management</h2>
+
+  <!-- Add/Edit Blog Form -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">Add / Edit Blog</div>
+    <div class="card-body">
+      <form id="blogForm">
+        <input type="hidden" id="blogId">
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" id="title" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Content</label>
+          <textarea id="content" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Image</label>
+          <input type="file" id="image" class="form-control" accept="image/*">
+          <img id="preview" class="preview d-none">
+        </div>
+        <button type="submit" class="btn btn-success">Save Blog</button>
+        <button type="reset" class="btn btn-secondary">Clear</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Blog List -->
+  <div class="card">
+    <div class="card-header bg-dark text-white">All Blogs</div>
+    <div class="card-body">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Image</th>
+            <th>Content</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="blogTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } 
+    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } 
+    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+  // Replace with your Firebase project config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const blogForm = document.getElementById("blogForm");
+  const blogTable = document.getElementById("blogTable");
+  const preview = document.getElementById("preview");
+  let editId = null;
+
+  // Image preview
+  document.getElementById("image").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove("d-none");
+    }
+  });
+
+  // Render blogs
+  async function renderBlogs() {
+    blogTable.innerHTML = "";
+    const snapshot = await getDocs(collection(db, "blogs"));
+    let index = 1;
+    snapshot.forEach((docSnap) => {
+      const blog = docSnap.data();
+      blogTable.innerHTML += `
+        <tr>
+          <td>${index++}</td>
+          <td>${blog.title}</td>
+          <td>${blog.image ? `<img src="${blog.image}" width="80">` : ''}</td>
+          <td>${blog.content.substring(0, 50)}...</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="editBlog('${docSnap.id}', '${blog.title}', '${blog.image || ''}', \`${blog.content}\`)">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteBlog('${docSnap.id}', '${blog.image || ''}')">Delete</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  // Save blog
+  blogForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById("title").value;
+    const content = document.getElementById("content").value;
+    const file = document.getElementById("image").files[0];
+    let imageUrl = null;
+
+    if (file) {
+      const storageRef = ref(storage, "blogImages/" + Date.now() + "_" + file.name);
+      await uploadBytes(storageRef, file);
+      imageUrl = await getDownloadURL(storageRef);
+    }
+
+    if (editId) {
+      const blogRef = doc(db, "blogs", editId);
+      await updateDoc(blogRef, { title, content, ...(imageUrl && { image: imageUrl }) });
+      editId = null;
+    } else {
+      await addDoc(collection(db, "blogs"), { title, content, image: imageUrl });
+    }
+
+    blogForm.reset();
+    preview.classList.add("d-none");
+    renderBlogs();
+  });
+
+  // Edit blog
+  window.editBlog = function (id, title, image, content) {
+    editId = id;
+    document.getElementById("title").value = title;
+    document.getElementById("content").value = content;
+    if (image) {
+      preview.src = image;
+      preview.classList.remove("d-none");
+    } else {
+      preview.classList.add("d-none");
+    }
+  };
+
+  // Delete blog
+  window.deleteBlog = async function (id, imageUrl) {
+    if (confirm("Delete this blog?")) {
+      await deleteDoc(doc(db, "blogs", id));
+      if (imageUrl) {
+        try {
+          const imageRef = ref(storage, imageUrl);
+          await deleteObject(imageRef);
+        } catch {}
+      }
+      renderBlogs();
+    }
+  };
+
+  // Load blogs
+  renderBlogs();
+</script>
+</body>
+</html>

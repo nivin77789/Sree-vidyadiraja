@@ -473,3 +473,133 @@ h4, h5, h6, .h4, .h5, .h6 {
     color: var(--bs-primary) !important;
 }
 /*** Footer End ***/
+/*** Footer End ***/
+
+/*** =========================
+     Admin Panel Styling 
+========================= ***/
+
+/* Admin page background */
+.admin-wrapper {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 40px 20px;
+}
+
+/* Dashboard Heading */
+.admin-wrapper h2 {
+    font-weight: 700;
+    color: var(--bs-dark);
+    margin-bottom: 20px;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+    transition: 0.3s ease-in-out;
+    background: #fff;
+}
+
+.card:hover {
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 12px 12px 0 0 !important;
+    background: var(--bs-primary);
+    color: #fff;
+}
+
+/* Blog Form */
+#blogForm input,
+#blogForm textarea {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: border 0.2s ease-in-out;
+}
+
+#blogForm input:focus,
+#blogForm textarea:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0px 0px 5px rgba(13,110,253,0.3);
+    outline: none;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-success {
+    background: #198754;
+    border: none;
+}
+.btn-success:hover {
+    background: #157347;
+}
+
+.btn-primary {
+    background: var(--bs-primary);
+    border: none;
+}
+.btn-primary:hover {
+    background: #0b5ed7;
+}
+
+.btn-danger {
+    background: #dc3545;
+    border: none;
+}
+.btn-danger:hover {
+    background: #bb2d3b;
+}
+
+/* Blog Table */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+}
+
+.table th {
+    font-weight: 600;
+    background-color: #f1f3f5;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.table img {
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    max-height: 60px;
+}
+
+/* Admin Navbar (optional distinct style) */
+.admin-navbar {
+    background: var(--bs-dark) !important;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+}
+
+.admin-navbar a {
+    color: #fff !important;
+    font-weight: 600;
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.admin-navbar a:hover {
+    color: var(--bs-primary) !important;
+}
