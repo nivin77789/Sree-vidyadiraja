@@ -630,3 +630,19 @@ h4, h5, h6, .h4, .h5, .h6 {
 .qr-box {
   border-left: 5px solid #eaeaea;
 }
+/* Scrollable description */
+.full-desc {
+  max-height: 120px;   /* adjust as needed */
+  overflow-y: auto;
+  display: none;
+  padding-right: 5px;
+}
+
+/* Optional: prettier scrollbar */
+.full-desc::-webkit-scrollbar {
+  width: 6px;
+}
+.full-desc::-webkit-scrollbar-thumb {
+  background: #ff6f00;
+  border-radius: 10px;
+}
