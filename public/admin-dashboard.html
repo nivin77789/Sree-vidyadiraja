@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Admin Panel - Blog Management</title>
+  <title>Admin Panel - Blog, Video & Product Management</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <!-- Bootstrap -->
@@ -10,54 +10,159 @@
 
   <style>
     img.preview { max-height: 100px; margin-top: 10px; border-radius: 6px; }
+    iframe.preview { width: 200px; height: 120px; margin-top: 10px; border-radius: 6px; }
+    .panel { display: none; } /* hide panels by default */
   </style>
 </head>
 <body>
 
 <div class="container mt-5">
-  <h2 class="mb-4">Blog Management</h2>
+  <h2 class="mb-4">Admin Panel</h2>
 
-  <!-- Add/Edit Blog Form -->
-  <div class="card mb-4">
-    <div class="card-header bg-primary text-white">Add / Edit Blog</div>
-    <div class="card-body">
-      <form id="blogForm">
-        <input type="hidden" id="blogId">
-        <div class="mb-3">
-          <label class="form-label">Title</label>
-          <input type="text" id="title" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Content</label>
-          <textarea id="content" class="form-control" rows="4" required></textarea>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Image</label>
-          <input type="file" id="image" class="form-control" accept="image/*">
-          <img id="preview" class="preview d-none">
-        </div>
-        <button type="submit" class="btn btn-success">Save Blog</button>
-        <button type="reset" class="btn btn-secondary">Clear</button>
-      </form>
+  <!-- Toggle Buttons -->
+  <div class="mb-4">
+    <button class="btn btn-primary me-2" onclick="showPanel('blogPanel')">Manage Blogs</button>
+    <button class="btn btn-success me-2" onclick="showPanel('videoPanel')">Manage Videos</button>
+    <button class="btn btn-warning" onclick="showPanel('productPanel')">Manage Products</button>
+  </div>
+
+  <!-- ===== BLOG MANAGEMENT ===== -->
+  <div id="blogPanel" class="panel">
+    <div class="card mb-5">
+      <div class="card-header bg-primary text-white">Blog Management</div>
+      <div class="card-body">
+        <form id="blogForm">
+          <input type="hidden" id="blogId">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" id="title" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Content</label>
+            <textarea id="content" class="form-control" rows="4" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Image</label>
+            <input type="file" id="image" class="form-control" accept="image/*">
+            <img id="preview" class="preview d-none">
+          </div>
+          <button type="submit" class="btn btn-success">Save Blog</button>
+          <button type="reset" class="btn btn-secondary">Clear</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mb-5">
+      <div class="card-header bg-dark text-white">All Blogs</div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Image</th>
+              <th>Content</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="blogTable"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Blog List -->
-  <div class="card">
-    <div class="card-header bg-dark text-white">All Blogs</div>
-    <div class="card-body">
-      <table class="table table-bordered table-hover">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Image</th>
-            <th>Content</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="blogTable"></tbody>
-      </table>
+  <!-- ===== VIDEO MANAGEMENT ===== -->
+  <div id="videoPanel" class="panel">
+    <div class="card mb-5">
+      <div class="card-header bg-success text-white">Video Management</div>
+      <div class="card-body">
+        <form id="videoForm">
+          <input type="hidden" id="videoId">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" id="videoTitle" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea id="videoDesc" class="form-control" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">YouTube URL</label>
+            <input type="url" id="youtubeUrl" class="form-control" required>
+            <iframe id="videoPreview" class="preview d-none" allowfullscreen></iframe>
+          </div>
+          <button type="submit" class="btn btn-success">Save Video</button>
+          <button type="reset" class="btn btn-secondary">Clear</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-dark text-white">All Videos</div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>YouTube</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="videoTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRODUCT MANAGEMENT ===== -->
+  <div id="productPanel" class="panel">
+    <div class="card mb-5">
+      <div class="card-header bg-warning text-dark">Product Management</div>
+      <div class="card-body">
+        <form id="productForm">
+          <input type="hidden" id="productId">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" id="productTitle" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea id="productDesc" class="form-control" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Image</label>
+            <input type="file" id="productImage" class="form-control" accept="image/*">
+            <img id="productPreview" class="preview d-none">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">URL</label>
+            <input type="url" id="productUrl" class="form-control" placeholder="https://example.com">
+          </div>
+          <button type="submit" class="btn btn-warning">Save Product</button>
+          <button type="reset" class="btn btn-secondary">Clear</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-dark text-white">All Products</div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Image</th>
+              <th>Description</th>
+              <th>URL</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productTable"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -67,15 +172,13 @@
 
 <!-- Firebase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } 
-    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } 
-    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
-  // Replace with your Firebase project config
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyCxzn7eUe9QRa0sjLp4v6rS2RJU_cRCtkg",
+  apiKey: "AIzaSyCxzn7eUe9QRa0sjLp6rS2RJU_cRCtkg",
   authDomain: "vidyadhiraja-b6ec5.firebaseapp.com",
   projectId: "vidyadhiraja-b6ec5",
   storageBucket: "vidyadhiraja-b6ec5.firebasestorage.app",
@@ -83,106 +186,255 @@ const firebaseConfig = {
   appId: "1:1018541742665:web:4ded9d4c51d33edd203d98"
 };
 
-//vidyadhiraja-b6ec5.firebasestorage.app
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-  const blogForm = document.getElementById("blogForm");
-  const blogTable = document.getElementById("blogTable");
-  const preview = document.getElementById("preview");
-  let editId = null;
+/* ===== BLOG SECTION ===== */
+const blogForm = document.getElementById("blogForm");
+const blogTable = document.getElementById("blogTable");
+const preview = document.getElementById("preview");
+let editId = null;
 
-  // Image preview
-  document.getElementById("image").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      preview.src = URL.createObjectURL(file);
-      preview.classList.remove("d-none");
-    }
+document.getElementById("image").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(file) { preview.src = URL.createObjectURL(file); preview.classList.remove("d-none"); }
+});
+
+async function renderBlogs() {
+  blogTable.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "blogs"));
+  let index = 1;
+  snapshot.forEach(docSnap => {
+    const blog = docSnap.data();
+    blogTable.innerHTML += `
+      <tr>
+        <td>${index++}</td>
+        <td>${blog.title}</td>
+        <td>${blog.image ? `<img src="${blog.image}" width="80">` : ''}</td>
+        <td>${blog.content.substring(0,50)}...</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick="editBlog('${docSnap.id}','${blog.title}','${blog.image||''}',\`${blog.content}\`)">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteBlog('${docSnap.id}','${blog.image||''}')">Delete</button>
+        </td>
+      </tr>
+    `;
   });
+}
 
-  // Render blogs
-  async function renderBlogs() {
-    blogTable.innerHTML = "";
-    const snapshot = await getDocs(collection(db, "blogs"));
-    let index = 1;
-    snapshot.forEach((docSnap) => {
-      const blog = docSnap.data();
-      blogTable.innerHTML += `
-        <tr>
-          <td>${index++}</td>
-          <td>${blog.title}</td>
-          <td>${blog.image ? `<img src="${blog.image}" width="80">` : ''}</td>
-          <td>${blog.content.substring(0, 50)}...</td>
-          <td>
-            <button class="btn btn-sm btn-primary" onclick="editBlog('${docSnap.id}', '${blog.title}', '${blog.image || ''}', \`${blog.content}\`)">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteBlog('${docSnap.id}', '${blog.image || ''}')">Delete</button>
-          </td>
-        </tr>
-      `;
-    });
+blogForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+  const file = document.getElementById("image").files[0];
+  let imageUrl = null;
+
+  if(file) {
+    const storageRef = ref(storage, "blogImages/"+Date.now()+"_"+file.name);
+    await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(storageRef);
   }
 
-  // Save blog
-  blogForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if(editId){
+    const blogRef = doc(db,"blogs",editId);
+    await updateDoc(blogRef,{title,content,...(imageUrl && {image:imageUrl})});
+    editId = null;
+  } else {
+    await addDoc(collection(db,"blogs"),{title,content,image:imageUrl});
+  }
 
-    const title = document.getElementById("title").value;
-    const content = document.getElementById("content").value;
-    const file = document.getElementById("image").files[0];
-    let imageUrl = null;
-
-    if (file) {
-      const storageRef = ref(storage, "blogImages/" + Date.now() + "_" + file.name);
-      await uploadBytes(storageRef, file);
-      imageUrl = await getDownloadURL(storageRef);
-    
-    }
-
-    if (editId) {
-      const blogRef = doc(db, "blogs", editId);
-      await updateDoc(blogRef, { title, content, ...(imageUrl && { image: imageUrl }) });
-      editId = null;
-    } else {
-      await addDoc(collection(db, "blogs"), { title, content, image: imageUrl });
-    }
-
-    blogForm.reset();
-    preview.classList.add("d-none");
-    renderBlogs();
-  });
-
-  // Edit blog
-  window.editBlog = function (id, title, image, content) {
-    editId = id;
-    document.getElementById("title").value = title;
-    document.getElementById("content").value = content;
-    if (image) {
-      preview.src = image;
-      preview.classList.remove("d-none");
-    } else {
-      preview.classList.add("d-none");
-    }
-  };
-
-  // Delete blog
-  window.deleteBlog = async function (id, imageUrl) {
-    if (confirm("Delete this blog?")) {
-      await deleteDoc(doc(db, "blogs", id));
-      if (imageUrl) {
-        try {
-          const imageRef = ref(storage, imageUrl);
-          await deleteObject(imageRef);
-        } catch {}
-      }
-      renderBlogs();
-    }
-  };
-
-  // Load blogs
+  blogForm.reset();
+  preview.classList.add("d-none");
   renderBlogs();
+});
+
+window.editBlog = function(id,title,image,content){
+  editId = id;
+  document.getElementById("title").value = title;
+  document.getElementById("content").value = content;
+  if(image){ preview.src=image; preview.classList.remove("d-none"); } else { preview.classList.add("d-none"); }
+}
+
+window.deleteBlog = async function(id,imageUrl){
+  if(confirm("Delete this blog?")){
+    await deleteDoc(doc(db,"blogs",id));
+    if(imageUrl){ try{ await deleteObject(ref(storage,imageUrl)); } catch{} }
+    renderBlogs();
+  }
+}
+
+renderBlogs();
+
+/* ===== VIDEO SECTION ===== */
+const videoForm = document.getElementById("videoForm");
+const videoTable = document.getElementById("videoTable");
+const videoPreview = document.getElementById("videoPreview");
+let videoEditId = null;
+
+document.getElementById("youtubeUrl").addEventListener("input", e => {
+  const url = e.target.value;
+  const id = extractYouTubeId(url);
+  if(id){ videoPreview.src="https://www.youtube.com/embed/"+id; videoPreview.classList.remove("d-none"); }
+  else { videoPreview.classList.add("d-none"); }
+});
+
+function extractYouTubeId(url){
+  const regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&#]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
+async function renderVideos(){
+  videoTable.innerHTML="";
+  const snapshot = await getDocs(collection(db,"videos"));
+  let index=1;
+  snapshot.forEach(docSnap => {
+    const video = docSnap.data();
+    videoTable.innerHTML += `
+      <tr>
+        <td>${index++}</td>
+        <td>${video.title}</td>
+        <td><iframe width="200" height="120" src="https://www.youtube.com/embed/${video.youtubeId}" allowfullscreen></iframe></td>
+        <td>${video.description.substring(0,50)}...</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick="editVideo('${docSnap.id}','${video.title}','${video.youtubeId}',\`${video.description}\`)">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteVideo('${docSnap.id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+videoForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const title = document.getElementById("videoTitle").value;
+  const description = document.getElementById("videoDesc").value;
+  const youtubeUrl = document.getElementById("youtubeUrl").value;
+  const youtubeId = extractYouTubeId(youtubeUrl);
+  if(!youtubeId){ alert("Invalid YouTube URL"); return; }
+
+  if(videoEditId){
+    const videoRef = doc(db,"videos",videoEditId);
+    await updateDoc(videoRef,{title,description,youtubeId});
+    videoEditId=null;
+  } else { await addDoc(collection(db,"videos"),{title,description,youtubeId}); }
+
+  videoForm.reset();
+  videoPreview.classList.add("d-none");
+  renderVideos();
+});
+
+window.editVideo = function(id,title,youtubeId,description){
+  videoEditId = id;
+  document.getElementById("videoTitle").value=title;
+  document.getElementById("videoDesc").value=description;
+  document.getElementById("youtubeUrl").value="https://www.youtube.com/watch?v="+youtubeId;
+  videoPreview.src="https://www.youtube.com/embed/"+youtubeId;
+  videoPreview.classList.remove("d-none");
+}
+
+window.deleteVideo = async function(id){
+  if(confirm("Delete this video?")){ await deleteDoc(doc(db,"videos",id)); renderVideos(); }
+}
+
+renderVideos();
+
+/* ===== PRODUCT SECTION ===== */
+const productForm = document.getElementById("productForm");
+const productTable = document.getElementById("productTable");
+const productPreview = document.getElementById("productPreview");
+let productEditId = null;
+
+document.getElementById("productImage").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(file){ productPreview.src=URL.createObjectURL(file); productPreview.classList.remove("d-none"); }
+});
+
+async function renderProducts(){
+  productTable.innerHTML="";
+  const snapshot = await getDocs(collection(db,"products"));
+  let index=1;
+  snapshot.forEach(docSnap=>{
+    const product = docSnap.data();
+    productTable.innerHTML += `
+      <tr>
+        <td>${index++}</td>
+        <td>${product.title}</td>
+       <td>${product.image ? `<img src="${product.image}" width="80">` : ''}</td>
+        <td>${product.description.substring(0, 50)}...</td>
+        <td>${product.url ? `<a href="${product.url}" target="_blank">${product.url}</a>` : ''}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick="editProduct('${docSnap.id}', '${product.title}', '${product.image || ''}', \`${product.description}\`, '${product.url || ''}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteProduct('${docSnap.id}', '${product.image || ''}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+productForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const title = document.getElementById("productTitle").value;
+  const description = document.getElementById("productDesc").value;
+  const url = document.getElementById("productUrl").value;
+  const file = document.getElementById("productImage").files[0];
+  let imageUrl = null;
+
+  if (file) {
+    const storageRef = ref(storage, "productImages/" + Date.now() + "_" + file.name);
+    await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(storageRef);
+  }
+
+  if (productEditId) {
+    const productRef = doc(db, "products", productEditId);
+    await updateDoc(productRef, { title, description, url, ...(imageUrl && { image: imageUrl }) });
+    productEditId = null;
+  } else {
+    await addDoc(collection(db, "products"), { title, description, url, image: imageUrl });
+  }
+
+  productForm.reset();
+  productPreview.classList.add("d-none");
+  renderProducts();
+});
+
+window.editProduct = function(id, title, image, description, url) {
+  productEditId = id;
+  document.getElementById("productTitle").value = title;
+  document.getElementById("productDesc").value = description;
+  document.getElementById("productUrl").value = url;
+  if (image) {
+    productPreview.src = image;
+    productPreview.classList.remove("d-none");
+  } else {
+    productPreview.classList.add("d-none");
+  }
+}
+
+window.deleteProduct = async function(id, imageUrl) {
+  if (confirm("Delete this product?")) {
+    await deleteDoc(doc(db, "products", id));
+    if (imageUrl) {
+      try {
+        const imageRef = ref(storage, imageUrl);
+        await deleteObject(imageRef);
+      } catch {}
+    }
+    renderProducts();
+  }
+}
+
+renderProducts();
+
+/* ===== PANEL TOGGLE ===== */
+window.showPanel = function(panelId) {
+  document.querySelectorAll('.panel').forEach(panel => panel.style.display = 'none');
+  document.getElementById(panelId).style.display = 'block';
+}
+
+// Show blogs first by default
+showPanel('blogPanel');
 </script>
 </body>
 </html>

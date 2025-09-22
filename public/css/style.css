@@ -604,3 +604,29 @@ h4, h5, h6, .h4, .h5, .h6 {
 .admin-navbar a:hover {
     color: var(--bs-primary) !important;
 }
+/* Custom Orange Theme */
+.btn-orange {
+  background-color: #ff6600;
+  border-color: #ff6600;
+  color: #fff;
+}
+.btn-orange:hover,
+.btn-orange:focus {
+  background-color: #e65c00;
+  border-color: #e65c00;
+  color: #fff;
+}
+
+.text-orange {
+  color: #ff6600 !important;
+}
+
+.bg-orange {
+  background-color: #ffffff !important;
+}
+
+/* Donation Section */
+.donation-box,
+.qr-box {
+  border-left: 5px solid #eaeaea;
+}
