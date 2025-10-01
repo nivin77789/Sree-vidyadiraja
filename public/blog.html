@@ -48,6 +48,127 @@
       background-color: #ff6f00 !important;
       color: #fff !important;
     }
+
+    /* Hero Header with Banner Background */
+    .hero-header {
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .hero-header .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-content {
+      background: rgba(255, 255, 255, 0.194);
+      padding: 40px;
+      border-radius: 10px;
+      max-width: 600px;
+    }
+
+    .hero-content h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #000;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin: -10;
+    }
+
+    .breadcrumb-item a {
+      color: #ff6f00;
+      text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .hero-header {
+        min-height: 350px;
+        margin-top: 80px;
+      }
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+      .hero-content {
+        padding: 30px;
+      }
+    }
+
+    /* Marquee Styles */
+    .blog-marquee {
+      background: linear-gradient(90deg, #ff6f00, #e65a00);
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-top: -96px;
+    }
+
+    .marquee-content {
+      display: flex;
+      animation: scroll 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 50px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+
+    .marquee-item img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+      border: 2px solid white;
+    }
+
+    .marquee-item span {
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .blog-marquee:hover .marquee-content {
+      animation-play-state: paused;
+    }
   </style>
 </head>
 
@@ -76,7 +197,7 @@
     <div class="container">
       <nav class="navbar navbar-light navbar-expand-lg py-3">
         <a href="index.html" class="navbar-brand">
-          <h5 class="mb-0"><span style="color:#0D5483;">Sree Vidyadhiraja Foundation</span>
+          <h5 class="mb-0"><span style="color:#0D5483;">The Hindu Today Online</span>
 </h5>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -100,19 +221,29 @@
     </div>
   </div>
 
-  <div class="container-fluid hero-header">
+  <!-- Hero Header with Banner Background -->
+  <div class="container-fluid hero-header" id="heroHeader">
     <div class="container">
       <div class="row">
         <div class="col-lg-7">
-          <div class="hero-header-inner animated zoomIn">
-            <h1 class="display-1 text-dark">Latest Blog</h1>
-            <ol class="breadcrumb mb-0">
-              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-              <li class="breadcrumb-item text-dark">Blog</li>
-            </ol>
+          <div class="hero-content">
+            <h1>Latest Blog</h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Blog</li>
+              </ol>
+            </nav>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Blog Marquee -->
+  <div class="blog-marquee">
+    <div class="marquee-content" id="marqueeContent">
+      <!-- Blog items will be dynamically loaded here -->
     </div>
   </div>
 
@@ -249,7 +380,46 @@
     const db = getFirestore(app);
 
     const blogContainer = document.getElementById("blogContainer");
+    const heroHeader = document.getElementById("heroHeader");
+    const marqueeContent = document.getElementById("marqueeContent");
 
+    // Load Banner as Hero Background
+    async function loadBanner() {
+      try {
+        const bannerSnapshot = await getDocs(collection(db, "banners"));
+        if (!bannerSnapshot.empty) {
+          const banner = bannerSnapshot.docs[0].data();
+          heroHeader.style.backgroundImage = `url('${banner.imageUrl}')`;
+        }
+      } catch (error) {
+        console.log("No banner found");
+      }
+    }
+
+    // Load Marquee with Blog Titles
+    async function loadMarquee() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "blogs"));
+        let marqueeHTML = '';
+        
+        querySnapshot.forEach((docSnap) => {
+          const blog = docSnap.data();
+          marqueeHTML += `
+            <div class="marquee-item">
+              <img src="${blog.image}" alt="${blog.title}">
+              <span>${blog.title}</span>
+            </div>
+          `;
+        });
+        
+        // Duplicate content for seamless loop
+        marqueeContent.innerHTML = marqueeHTML + marqueeHTML;
+      } catch (error) {
+        console.log("Error loading marquee");
+      }
+    }
+
+    // Load Blogs
     async function loadBlogs() {
       const querySnapshot = await getDocs(collection(db, "blogs"));
       blogContainer.innerHTML = "";
@@ -281,6 +451,8 @@
       });
     }
 
+    loadBanner();
+    loadMarquee();
     loadBlogs();
   </script>
 

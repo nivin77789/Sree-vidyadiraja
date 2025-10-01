@@ -28,6 +28,23 @@
 
   <!-- ===== BLOG MANAGEMENT ===== -->
   <div id="blogPanel" class="panel">
+    <!-- Blog Page Banner Section -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">Blog Page Banner</div>
+      <div class="card-body">
+        <form id="bannerForm">
+          <div class="mb-3">
+            <label class="form-label">Upload Banner Image</label>
+            <input type="file" id="bannerImage" class="form-control" accept="image/*" required>
+            <small class="text-muted">This will replace the existing banner image</small>
+            <img id="bannerPreview" class="preview d-none" style="max-height: 200px; width: 100%; object-fit: cover;">
+          </div>
+          <button type="submit" class="btn btn-info">Upload Banner</button>
+        </form>
+        <div id="currentBanner" class="mt-3"></div>
+      </div>
+    </div>
+
     <div class="card mb-5">
       <div class="card-header bg-primary text-white">Blog Management</div>
       <div class="card-body">
@@ -189,6 +206,76 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
+/* ===== BANNER SECTION ===== */
+const bannerForm = document.getElementById("bannerForm");
+const bannerPreview = document.getElementById("bannerPreview");
+const currentBannerDiv = document.getElementById("currentBanner");
+
+document.getElementById("bannerImage").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(file){ bannerPreview.src=URL.createObjectURL(file); bannerPreview.classList.remove("d-none"); }
+});
+
+async function renderBanner(){
+  try {
+    const bannerDoc = await getDocs(collection(db, "banners"));
+    if(!bannerDoc.empty){
+      const banner = bannerDoc.docs[0].data();
+      currentBannerDiv.innerHTML = `
+        <div class="alert alert-success">
+          <strong>Current Banner:</strong><br>
+          <img src="${banner.imageUrl}" style="max-height: 200px; width: 100%; object-fit: cover; margin-top: 10px; border-radius: 6px;">
+        </div>
+      `;
+    } else {
+      currentBannerDiv.innerHTML = '<div class="alert alert-warning">No banner uploaded yet</div>';
+    }
+  } catch(e){
+    currentBannerDiv.innerHTML = '<div class="alert alert-warning">No banner uploaded yet</div>';
+  }
+}
+
+bannerForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const file = document.getElementById("bannerImage").files[0];
+  if(!file){ alert("Please select an image"); return; }
+
+  try {
+    // Get existing banner document
+    const bannerSnapshot = await getDocs(collection(db, "banners"));
+    
+    // Delete old banner image from storage if exists
+    if(!bannerSnapshot.empty){
+      const oldBanner = bannerSnapshot.docs[0].data();
+      if(oldBanner.imageUrl){
+        try{ await deleteObject(ref(storage, oldBanner.imageUrl)); } catch{}
+      }
+      // Delete old document
+      await deleteDoc(bannerSnapshot.docs[0].ref);
+    }
+
+    // Upload new banner
+    const storageRef = ref(storage, "banners/blogPageBanner_"+Date.now()+"_"+file.name);
+    await uploadBytes(storageRef, file);
+    const imageUrl = await getDownloadURL(storageRef);
+
+    // Save new banner document
+    await addDoc(collection(db, "banners"), {
+      imageUrl: imageUrl,
+      updatedAt: new Date().toISOString()
+    });
+
+    alert("Banner uploaded successfully!");
+    bannerForm.reset();
+    bannerPreview.classList.add("d-none");
+    renderBanner();
+  } catch(error){
+    alert("Error uploading banner: " + error.message);
+  }
+});
+
+renderBanner();
 
 /* ===== BLOG SECTION ===== */
 const blogForm = document.getElementById("blogForm");
