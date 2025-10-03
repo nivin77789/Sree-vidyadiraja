@@ -38,15 +38,51 @@
       color: #ff6f00 !important;
     }
 
-    /* Hero Header with Banner Background */
+    /* Hero Header with Horizontal Scrolling Banner */
     .hero-header {
       position: relative;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       min-height: 500px;
       display: flex;
       align-items: center;
+      overflow: hidden;
+    }
+
+    .banner-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .banner-track {
+      display: flex;
+      height: 100%;
+      animation: bannerScroll 20s linear infinite;
+    }
+
+    .banner-slide {
+      flex-shrink: 0;
+      width: 100vw;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    @keyframes bannerScroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .banner-slider:hover .banner-track {
+      animation-play-state: paused;
     }
 
     .hero-header::before {
@@ -180,8 +216,15 @@
         </div>
         <!-- Topbar End -->
 
-  <!-- Hero Header with Banner Background -->
+  <!-- Hero Header with Horizontal Scrolling Banner -->
   <div class="container-fluid hero-header" id="heroHeader">
+    <!-- Banner Slider Container -->
+    <div class="banner-slider">
+      <div class="banner-track" id="bannerTrack">
+        <!-- Banner slides will be injected here -->
+      </div>
+    </div>
+    
     <div class="container">
       <div class="row">
         <div class="col-lg-8">
@@ -292,18 +335,32 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const heroHeader = document.getElementById("heroHeader");
+    const bannerTrack = document.getElementById("bannerTrack");
 
-    // Load Banner as Hero Background
-    async function loadBanner() {
+    // Load Multiple Banners with Horizontal Scrolling (Marquee Style)
+    async function loadBanners() {
       try {
         const bannerSnapshot = await getDocs(collection(db, "banners"));
-        if (!bannerSnapshot.empty) {
-          const banner = bannerSnapshot.docs[0].data();
-          heroHeader.style.backgroundImage = `url('${banner.imageUrl}')`;
+        if (bannerSnapshot.empty) {
+          // Set default banner if none exists
+          bannerTrack.innerHTML = '<div class="banner-slide" style="background-image: url(\'img/default-banner.jpg\')"></div>';
+          return;
         }
+
+        let bannerHTML = '';
+        
+        bannerSnapshot.forEach((doc) => {
+          const banner = doc.data();
+          bannerHTML += `
+            <div class="banner-slide" style="background-image: url('${banner.imageUrl}')"></div>
+          `;
+        });
+        
+        // Duplicate banners for seamless infinite scroll
+        bannerTrack.innerHTML = bannerHTML + bannerHTML;
+        
       } catch (error) {
-        console.log("No banner found");
+        console.log("Error loading banners:", error);
       }
     }
 
@@ -331,7 +388,7 @@
       }
     }
 
-    loadBanner();
+    loadBanners();
     loadBlog();
   </script>
 
